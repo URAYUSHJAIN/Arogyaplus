@@ -52,7 +52,7 @@ const About = () => {
 
             <a 
               href="#ai-features" 
-              className="bg-blue-600 text-white px-8 py-3 rounded-full font-bold hover:bg-blue-700 hover:shadow-xl transform hover:scale-105 transition-all duration-300 inline-block border-2 border-blue-600"
+              className=" text-white px-8 py-3 rounded-full font-bold hover:bg-blue-600 hover:shadow-xl transform hover:scale-105 transition-all duration-300 inline-block border-2 border-blue-600"
             >
               Learn More
             </a>

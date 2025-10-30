@@ -97,18 +97,30 @@ const Footer = () => {
             <ul className="space-y-3 text-gray-400">
               <li className="flex items-start">
                 <span className="mr-2">📍</span>
-                <span>123 Medical Center Drive, Healthcare City, HC 12345</span>
+                <span>B-Block, Sector 18, Noida, Uttar Pradesh 201301, India</span>
               </li>
               <li className="flex items-center">
                 <span className="mr-2">📞</span>
-                <a href="tel:+1234567890" className="hover:text-white transition-colors duration-300">
-                  +1 (234) 567-890
+                <a href="tel:+911124567890" className="hover:text-white transition-colors duration-300">
+                  +91 11 2456 7890
+                </a>
+              </li>
+              <li className="flex items-center">
+                <span className="mr-2">🚨</span>
+                <a href="tel:108" className="hover:text-red-300 text-red-400 transition-colors duration-300 font-semibold">
+                  Emergency: 108
+                </a>
+              </li>
+              <li className="flex items-center">
+                <span className="mr-2">🏥</span>
+                <a href="tel:102" className="hover:text-green-300 text-green-400 transition-colors duration-300">
+                  Ambulance: 102
                 </a>
               </li>
               <li className="flex items-center">
                 <span className="mr-2">✉️</span>
-                <a href="mailto:info@arogyaplus.com" className="hover:text-white transition-colors duration-300">
-                  info@arogyaplus.com
+                <a href="mailto:support@arogyaplus.in" className="hover:text-white transition-colors duration-300">
+                  support@arogyaplus.in
                 </a>
               </li>
             </ul>
@@ -117,9 +129,14 @@ const Footer = () => {
 
         {/* Bottom Copyright Bar */}
         <div className="border-t border-gray-800 pt-4 mt-6">
-          <p className="text-gray-500 text-sm text-center">
-            © 2025 ArogyaPlus - AI-Powered Healthcare. All rights reserved.
-          </p>
+          <div className="text-center space-y-2">
+            <p className="text-gray-500 text-sm">
+              © 2025 ArogyaPlus - AI-Powered Healthcare India. All rights reserved.
+            </p>
+            <p className="text-gray-600 text-xs">
+              Registered in India | GSTIN: 07XXXXX1234X1ZX | ISO 27001:2013 Certified
+            </p>
+          </div>
         </div>
       </div>
     </footer>
