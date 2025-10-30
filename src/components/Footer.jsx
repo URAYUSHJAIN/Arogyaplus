@@ -112,46 +112,6 @@ const Footer = () => {
                 </a>
               </li>
             </ul>
-
-            {/* Social Media Icons */}
-            <div className="flex gap-3 mt-4">
-              <a 
-                href="https://facebook.com" 
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-gray-800 hover:bg-blue-600 flex items-center justify-center transition-colors duration-300"
-                aria-label="Facebook"
-              >
-                <span>f</span>
-              </a>
-              <a 
-                href="https://twitter.com" 
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-gray-800 hover:bg-blue-400 flex items-center justify-center transition-colors duration-300"
-                aria-label="Twitter"
-              >
-                <span>𝕏</span>
-              </a>
-              <a 
-                href="https://linkedin.com" 
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-gray-800 hover:bg-blue-700 flex items-center justify-center transition-colors duration-300"
-                aria-label="LinkedIn"
-              >
-                <span>in</span>
-              </a>
-              <a 
-                href="https://instagram.com" 
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-gray-800 hover:bg-pink-600 flex items-center justify-center transition-colors duration-300"
-                aria-label="Instagram"
-              >
-                <span>📷</span>
-              </a>
-            </div>
           </div>
         </div>
 
