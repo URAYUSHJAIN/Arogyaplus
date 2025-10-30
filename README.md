@@ -5,9 +5,12 @@ ArogyaPlus is an innovative AI-powered healthcare technology platform that trans
 ## Features
 
 - **AI-Powered Medical Report Analysis** - Upload medical reports and get instant personalized insights
+- **🚨 ArogyaAlert Emergency Feature** - Quick access to emergency services and medical information sharing
 - **OCR, Computer Vision, and NLP Integration** - Advanced AI technologies for accurate report analysis
 - **Personalized Health Insights** - Get detailed explanations of medical terms and test results
 - **Modern Medicine + Ayurvedic Recommendations** - Unique blend of evidence-based medicine and traditional Ayurvedic wisdom
+- **Interactive Hospital Maps** - Find nearby hospitals with real-time location and directions
+- **Emergency Medical Summary Sharing** - Automatically save and share medical analysis for emergency situations
 - **Drag-and-Drop Report Upload** - Easy-to-use interface for uploading PDF, JPG, and PNG files
 - **Real-Time Analysis with Loading States** - Visual feedback during the analysis process
 - **Responsive Design** - Optimized for all devices from mobile to desktop
@@ -16,9 +19,12 @@ ArogyaPlus is an innovative AI-powered healthcare technology platform that trans
 
 - **React 19** - Latest version of React for building user interfaces
 - **Vite** - Fast build tool and development server
-- **React Router v6** - Client-side routing with data router APIs
+- **React Router v7** - Client-side routing with data router APIs
 - **Tailwind CSS v4** - Utility-first CSS framework
+- **Leaflet + React-Leaflet** - Interactive maps for hospital locations and navigation
 - **Google Gemini AI** (@google/genai) - Advanced AI for medical report analysis
+- **Browser Geolocation API** - Location services for emergency assistance
+- **LocalStorage API** - Emergency data persistence and medical summary storage
 
 ## Environment Setup
 
@@ -102,12 +108,18 @@ agogyaplus/
 │   │   ├── Testimonials.jsx
 │   │   ├── Doctors.jsx
 │   │   ├── MobileApp.jsx
-│   │   └── Blog.jsx
+│   │   ├── Blog.jsx
+│   │   └── MapView.jsx     # Interactive map component
 │   ├── pages/             # Route-level page components
 │   │   ├── HomePage.jsx
-│   │   └── AIAnalysisPage.jsx
+│   │   ├── AIAnalysisPage.jsx
+│   │   └── EmergencyPage.jsx  # ArogyaAlert emergency assistance
 │   ├── services/          # API integration and business logic
-│   │   └── geminiService.js
+│   │   ├── geminiService.js
+│   │   ├── locationService.js # Geolocation and mapping
+│   │   └── emergencyService.js # Emergency data management
+│   ├── data/              # Static data files
+│   │   └── hospitals.js   # Hospital and clinic information
 │   ├── App.jsx            # Root layout component
 │   ├── main.jsx           # Application entry point with routing
 │   └── index.css          # Global styles
@@ -119,8 +131,11 @@ agogyaplus/
 
 - `/` - Home page with all sections (Hero, About, Features, Services, etc.)
 - `/ai-analysis` - AI-powered medical report analysis page
+- `/emergency` - ArogyaAlert emergency assistance page with hospital finder and medical sharing
 
 ## How It Works
+
+### AI Medical Report Analysis
 
 1. **Upload** - Drag and drop or select your medical report (PDF, JPG, PNG)
 2. **Analyze** - AI processes the report using OCR, computer vision, and NLP
@@ -130,6 +145,43 @@ agogyaplus/
    - Modern medicine recommendations
    - Ayurvedic treatment suggestions
    - Lifestyle and dietary advice
+
+### 🚨 ArogyaAlert Emergency Feature
+
+The ArogyaAlert emergency system provides immediate access to healthcare assistance in critical situations:
+
+#### Key Features:
+- **Emergency Service Access** - One-click calling to local emergency services (911, 108, 999)
+- **Hospital Finder** - Real-time geolocation to find nearest hospitals and medical facilities
+- **Interactive Maps** - Visual hospital locations with directions and contact information
+- **Medical Summary Sharing** - Automatically saves AI analysis results for emergency responders
+- **Multi-platform Support** - Works on mobile, tablet, and desktop devices
+
+#### Emergency Workflow:
+1. **Access** - Click the red "ArogyaAlert" button from header, hero, or footer
+2. **Choose Action** - Either call emergency services or find nearby hospitals
+3. **Location Detection** - System requests and uses your location for accurate results
+4. **Hospital Display** - Interactive map shows nearby hospitals with:
+   - Distance and travel time
+   - Hospital type and specialties
+   - Contact information and directions
+   - Emergency availability status
+5. **Medical Sharing** - Share your saved medical analysis with emergency contacts
+
+#### Technical Requirements:
+- **Location Permission** - Browser geolocation access for hospital finding
+- **Internet Connection** - Required for map tiles and hospital data
+- **Modern Browser** - Supports HTML5 Geolocation API
+- **Mobile Compatibility** - Responsive design works on all devices
+
+#### Supported Emergency Numbers:
+- **US/Canada** - 911
+- **India** - 108 (Medical Emergency)
+- **UK** - 999
+- **Australia** - 000
+- **Europe** - 112
+
+The system automatically detects your location and uses the appropriate emergency number based on your browser's locale settings.
 
 ## Contributing
 

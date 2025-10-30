@@ -7,8 +7,16 @@ if (!apiKey || apiKey === 'your_api_key_here') {
 }
 
 // Initialize Gemini AI
-const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
-const model = genAI ? genAI.getGenerativeModel({ model: 'gemini-1.5-flash' }) : null;
+const genAI = apiKey && apiKey !== 'your_api_key_here' ? new GoogleGenerativeAI(apiKey) : null;
+const model = genAI ? genAI.getGenerativeModel({ 
+  model: 'gemini-1.5-flash',
+  generationConfig: {
+    temperature: 0.7,
+    topP: 0.8,
+    topK: 40,
+    maxOutputTokens: 2048,
+  },
+}) : null;
 
 // File validation helpers
 export const validateFile = (file) => {
@@ -117,6 +125,7 @@ export const analyzeReport = async (file) => {
 Format your response with clear section headings. Be empathetic, informative, and provide actionable advice. Important: This is for informational purposes only and should not replace professional medical consultation.`;
 
     // Make API call to Gemini with updated format for @google/genai v1.x
+    console.log('Making API request to Gemini...');
     const result = await model.generateContent({
       contents: [
         {
@@ -134,6 +143,7 @@ Format your response with clear section headings. Be empathetic, informative, an
       ],
     });
 
+    console.log('API request successful');
     const response = await result.response;
     const text = response.text();
 
@@ -146,18 +156,27 @@ Format your response with clear section headings. Be empathetic, informative, an
     };
   } catch (error) {
     console.error('Error analyzing report:', error);
+    console.error('Error details:', {
+      message: error.message,
+      status: error.status,
+      statusText: error.statusText,
+    });
 
     // Handle specific error types
     let errorMessage = 'Failed to analyze report. Please try again.';
 
-    if (error.message.includes('API key')) {
-      errorMessage = 'Invalid API key. Please check your configuration.';
-    } else if (error.message.includes('quota') || error.message.includes('rate limit')) {
-      errorMessage = 'Service temporarily unavailable. Please try again in a few moments.';
-    } else if (error.message.includes('network') || error.message.includes('fetch')) {
-      errorMessage = 'Network error. Please check your internet connection.';
+    if (error.message.includes('API key') || error.message.includes('API_KEY')) {
+      errorMessage = 'Invalid or restricted API key. Please check your Google Cloud Console settings and ensure the Generative Language API is enabled.';
+    } else if (error.message.includes('quota') || error.message.includes('rate limit') || error.message.includes('429')) {
+      errorMessage = 'API quota exceeded. Please try again later or upgrade your API plan.';
+    } else if (error.message.includes('503') || error.message.includes('temporarily unavailable')) {
+      errorMessage = 'Gemini service is temporarily unavailable. This might be due to: \n1. API key restrictions (check Google Cloud Console)\n2. Service maintenance\n3. Rate limiting\n\nPlease try again in a few moments.';
+    } else if (error.message.includes('network') || error.message.includes('fetch') || error.message.includes('Failed to fetch')) {
+      errorMessage = 'Network error. Please check your internet connection and try again.';
     } else if (error.message.includes('Invalid file')) {
       errorMessage = error.message;
+    } else if (error.message.includes('400')) {
+      errorMessage = 'Invalid request. Please ensure your file is a valid medical report image (JPG/PNG).';
     }
 
     return {

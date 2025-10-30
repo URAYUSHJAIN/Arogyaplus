@@ -23,11 +23,20 @@ const Hero = () => {
             <div className="flex flex-wrap gap-4">
               <Link 
                 to="/ai-analysis"
-                className="bg-white text-blue-600 px-8 py-4 rounded-full font-semibold hover:shadow-xl transform hover:scale-105 transition-all duration-300 inline-block"
+                className="bg-white text-blue-600 px-8 py-4 rounded-full font-bold hover:shadow-2xl hover:bg-gray-50 transform hover:scale-105 transition-all duration-300 inline-block border-2 border-white"
               >
                 Get Started
               </Link>
               <Link 
+                to="/emergency"
+                className="bg-red-600 text-white px-8 py-4 rounded-full font-bold hover:bg-red-700 hover:shadow-2xl transform hover:scale-105 transition-all duration-300 inline-block shadow-lg shadow-red-500/50 border-2 border-red-600 animate-pulse"
+              >
+                <svg className="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+                🚨 Emergency Help
+              </Link>
+              {/* <Link 
                 to="/ai-analysis" 
                 className="flex items-center gap-2 text-white hover:text-blue-100 transition-colors"
               >
@@ -35,7 +44,7 @@ const Hero = () => {
                   <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 Try AI Report Analyzer
-              </Link>
+              </Link> */}
             </div>
           </div>
 

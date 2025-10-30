@@ -41,7 +41,7 @@ const Header = () => {
         <div className="flex items-center justify-between h-20">
           {/* Logo Section */}
           <Link to="/" className="flex items-center">
-            <img src="/logo.png" alt="ArogyaPlus" className="h-12 w-auto" />
+            <img src="/logo1.jpg" alt="ArogyaPlus" className="h-12 w-auto" />
           </Link>
 
           {/* Desktop Navigation Menu */}
@@ -70,13 +70,17 @@ const Header = () => {
             </a>
           </nav>
 
-          {/* Try AI Analysis Button */}
+          {/* ArogyaAlert Emergency Button */}
           <div className="hidden md:block">
             <Link 
-              to="/ai-analysis"
-              className="bg-blue-600 text-white px-6 py-3 rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-300 font-semibold inline-block shadow-md"
+              to="/emergency"
+              className="bg-red-600 text-white px-6 py-3 rounded-full hover:bg-red-700 hover:shadow-2xl transform hover:scale-105 transition-all duration-300 font-bold inline-block shadow-lg shadow-red-500/50 border-2 border-red-600 animate-pulse ring-2 ring-red-300"
+              aria-label="Emergency assistance button"
             >
-              Try AI Analysis
+              <svg className="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+              🚨 ArogyaAlert
             </Link>
           </div>
 
@@ -130,11 +134,15 @@ const Header = () => {
               </a>
               
               <Link 
-                to="/ai-analysis"
-                className="bg-blue-600 text-white px-6 py-3 rounded-full hover:shadow-lg transition-all duration-300 font-semibold mt-2 inline-block text-center shadow-md"
+                to="/emergency"
+                className="bg-red-600 text-white px-6 py-3 rounded-full hover:bg-red-700 hover:shadow-2xl transition-all duration-300 font-bold mt-2 inline-block text-center shadow-lg shadow-red-500/50 border-2 border-red-600 animate-pulse ring-2 ring-red-300"
                 onClick={() => setIsMobileMenuOpen(false)}
+                aria-label="Emergency assistance button"
               >
-                Try AI Analysis
+                <svg className="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+                🚨 ArogyaAlert
               </Link>
             </nav>
           </div>

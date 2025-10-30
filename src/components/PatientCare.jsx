@@ -67,7 +67,7 @@ const PatientCare = () => {
               </div>
             </div>
 
-            <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300 mt-8">
+            <button className="bg-blue-600 text-white px-8 py-4 rounded-full font-bold hover:bg-blue-700 hover:shadow-2xl transform hover:scale-105 transition-all duration-300 mt-8 border-2 border-blue-600">
               Try AI Analysis
             </button>
           </div>

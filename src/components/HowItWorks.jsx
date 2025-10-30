@@ -89,9 +89,9 @@ const HowItWorks = () => {
         <div className="text-center mt-12">
           <Link 
             to="/ai-analysis"
-            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full font-semibold hover:shadow-xl transform hover:scale-105 transition-all duration-300 inline-block"
+            className="bg-blue-600 text-white px-8 py-4 rounded-full font-bold hover:bg-blue-700 hover:shadow-2xl transform hover:scale-105 transition-all duration-300 inline-block border-2 border-blue-600"
           >
-            Start Your Free Analysis
+            Start Your Analysis
           </Link>
         </div>
       </div>

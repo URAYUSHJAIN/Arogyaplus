@@ -55,6 +55,12 @@ const Footer = () => {
                   Our Doctors
                 </a>
               </li>
+              <li>
+                <Link to="/emergency" className="text-red-400 hover:text-red-300 transition-colors duration-300 flex items-center gap-1 font-semibold">
+                  <span>🚨</span>
+                  Emergency
+                </Link>
+              </li>
             </ul>
           </div>
 

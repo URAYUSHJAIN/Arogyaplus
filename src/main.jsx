@@ -5,6 +5,7 @@ import './index.css'
 import App from './App.jsx'
 import HomePage from './pages/HomePage.jsx'
 import AIAnalysisPage from './pages/AIAnalysisPage.jsx'
+import EmergencyPage from './pages/EmergencyPage.jsx'
 
 const router = createBrowserRouter(
   [
@@ -19,6 +20,10 @@ const router = createBrowserRouter(
         {
           path: '/ai-analysis',
           element: <AIAnalysisPage />,
+        },
+        {
+          path: '/emergency',
+          element: <EmergencyPage />,
         },
       ],
     },
