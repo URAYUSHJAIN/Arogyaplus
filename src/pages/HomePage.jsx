@@ -7,7 +7,6 @@ import PatientCare from '../components/PatientCare';
 import Specialties from '../components/Specialties';
 import Testimonials from '../components/Testimonials';
 import Doctors from '../components/Doctors';
-import MobileApp from '../components/MobileApp';
 import Blog from '../components/Blog';
 
 const HomePage = () => {
@@ -22,7 +21,6 @@ const HomePage = () => {
       <Specialties />
       <Testimonials />
       <Doctors />
-      <MobileApp />
       <Blog />
     </>
   );
