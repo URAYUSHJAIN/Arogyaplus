@@ -124,39 +124,77 @@ const AIAnalysisPage = () => {
               className="hidden"
               id="file-input"
             />
+            
+            {/* Camera Input for Mobile */}
+            <input
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={handleFileSelect}
+              className="hidden"
+              id="camera-input"
+            />
 
-            <label
-              htmlFor="file-input"
-              className={`block border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-all duration-300 ${
-                isDragging
-                  ? 'border-blue-600 bg-blue-100'
-                  : 'border-blue-400 bg-blue-50 hover:bg-blue-100'
-              }`}
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-            >
-              {/* Upload Icon */}
-              <svg
-                className="w-20 h-20 mx-auto mb-4 text-blue-600"
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+            <div className="flex flex-col md:flex-row gap-6 justify-center mb-8">
+              {/* Drag & Drop Zone */}
+              <label
+                htmlFor="file-input"
+                className={`flex-1 block border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-300 ${
+                  isDragging
+                    ? 'border-blue-600 bg-blue-100'
+                    : 'border-blue-400 bg-blue-50 hover:bg-blue-100'
+                }`}
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
               >
-                <path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-              </svg>
+                <svg
+                  className="w-16 h-16 mx-auto mb-4 text-blue-600"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  Upload Report
+                </h3>
+                <p className="text-gray-600 text-sm">Drag & drop or click to browse</p>
+              </label>
 
-              <h3 className="text-2xl font-semibold text-gray-900 mb-2">
-                {selectedFile ? selectedFile.name : 'Drag and drop your report here'}
-              </h3>
-              <p className="text-gray-600 mb-2">or click to browse</p>
-              <p className="text-sm text-gray-500">JPG, PNG (Max 10MB)</p>
-              <p className="text-xs text-gray-400 mt-2">PDF support coming soon</p>
+              {/* Camera Button */}
+              <label
+                htmlFor="camera-input"
+                className="flex-1 block border-2 border-blue-400 border-dashed rounded-xl p-8 text-center cursor-pointer bg-blue-50 hover:bg-blue-100 transition-all duration-300"
+              >
+                <svg
+                  className="w-16 h-16 mx-auto mb-4 text-blue-600"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                  <path d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  Take Photo
+                </h3>
+                <p className="text-gray-600 text-sm">Use camera to scan report</p>
+              </label>
+            </div>
 
-              {selectedFile && (
+            <div className="text-center mb-6">
+              <p className="text-sm text-gray-500">Supported formats: JPG, PNG (Max 10MB)</p>
+              <p className="text-xs text-gray-400 mt-1">PDF support coming soon</p>
+            </div>
+
+            {selectedFile && (
                 <div className="mt-4 p-4 bg-blue-100 rounded-lg">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -180,7 +218,6 @@ const AIAnalysisPage = () => {
                   </div>
                 </div>
               )}
-            </label>
 
             {/* Error Message */}
             {error && (

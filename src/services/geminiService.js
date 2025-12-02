@@ -6,15 +6,19 @@ if (!apiKey || apiKey === 'your_api_key_here') {
   console.error('Gemini API key is not configured. Please add VITE_GEMINI_API_KEY to your .env.local file.');
 }
 
+// Rate limiting variables
+let lastRequestTime = 0;
+const MIN_REQUEST_INTERVAL = 2000; // Minimum 2 seconds between requests
+
 // Initialize Gemini AI
 const genAI = apiKey && apiKey !== 'your_api_key_here' ? new GoogleGenerativeAI(apiKey) : null;
 const model = genAI ? genAI.getGenerativeModel({ 
-  model: 'gemini-1.5-flash',
+  model: 'gemini-2.5-flash',
   generationConfig: {
-    temperature: 0.7,
-    topP: 0.8,
+    temperature: 0.4,
+    topP: 0.95,
     topK: 40,
-    maxOutputTokens: 2048,
+    maxOutputTokens: 8192,
   },
 }) : null;
 
@@ -65,20 +69,94 @@ const parseResponse = (text) => {
     fullText: text,
   };
 
-  // Try to extract sections based on common headings
-  const summaryMatch = text.match(/(?:Summary|Key Findings)[:\s]*([\s\S]*?)(?=\n(?:Explanation|Medical|Health|Modern|Ayurvedic|Lifestyle|$))/i);
-  const insightsMatch = text.match(/(?:Explanation|Medical|Health Insights)[:\s]*([\s\S]*?)(?=\n(?:Modern|Ayurvedic|Lifestyle|$))/i);
-  const modernMatch = text.match(/(?:Modern Medicine|Recommendations)[:\s]*([\s\S]*?)(?=\n(?:Ayurvedic|Lifestyle|$))/i);
-  const ayurvedicMatch = text.match(/(?:Ayurvedic|Traditional)[:\s]*([\s\S]*?)(?=\n(?:Lifestyle|$))/i);
-  const lifestyleMatch = text.match(/(?:Lifestyle|Dietary)[:\s]*([\s\S]*?)$/i);
+  // Check if text is empty or just whitespace
+  if (!text || text.trim().length === 0) {
+    sections.summary = 'No response received from AI. Please try again.';
+    return sections;
+  }
 
-  sections.summary = summaryMatch ? summaryMatch[1].trim() : text.substring(0, 300);
-  sections.insights = insightsMatch ? insightsMatch[1].trim() : '';
-  sections.modernMedicine = modernMatch ? modernMatch[1].trim() : '';
-  sections.ayurvedic = ayurvedicMatch ? ayurvedicMatch[1].trim() : '';
-  sections.lifestyle = lifestyleMatch ? lifestyleMatch[1].trim() : '';
+  try {
+    // Clean up markdown code blocks and extra formatting
+    let cleanText = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    
+    // Check if cleanText is empty after cleaning
+    if (cleanText.length === 0) {
+      throw new Error('Empty text after cleaning');
+    }
+    
+    // Try to extract JSON object if it's embedded in text
+    const jsonMatch = cleanText.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      cleanText = jsonMatch[0];
+    }
+    
+    // Attempt to fix common JSON formatting issues
+    // Replace nested quotes and fix malformed strings
+    cleanText = cleanText
+      .replace(/\*\*/g, '') // Remove markdown bold
+      .replace(/\n\s*\n/g, '\n') // Remove extra newlines
+      .replace(/\\n/g, '\\\\n'); // Escape newlines properly
+    
+    const data = JSON.parse(cleanText);
+    
+    return {
+        summary: data.summary || '',
+        insights: data.insights || '',
+        modernMedicine: data.modernMedicine || '',
+        ayurvedic: data.ayurvedic || '',
+        lifestyle: data.lifestyle || '',
+        fullText: text
+    };
+  } catch (e) {
+    // Advanced extraction: Find each field in the JSON-like text
+    try {
+      const extractField = (fieldName) => {
+        // Match the field with its value, handling multi-line strings
+        const pattern = new RegExp(`"${fieldName}"\\s*:\\s*"([\\s\\S]*?)(?="\\s*[,}]|$)`, 'i');
+        const match = text.match(pattern);
+        if (match && match[1]) {
+          // Clean up the extracted text
+          return match[1]
+            .replace(/\\n/g, '\n')
+            .replace(/\*\*/g, '')
+            .replace(/\s+\n/g, '\n')
+            .trim();
+        }
+        return '';
+      };
 
-  return sections;
+      sections.summary = extractField('summary');
+      sections.insights = extractField('insights');
+      sections.modernMedicine = extractField('modernMedicine');
+      sections.ayurvedic = extractField('ayurvedic');
+      sections.lifestyle = extractField('lifestyle');
+
+      // If any section is still empty, try fallback regex
+      if (!sections.summary) {
+        const summaryMatch = text.match(/(?:"summary"\s*:\s*")([^"]+)/i);
+        sections.summary = summaryMatch ? summaryMatch[1] : '';
+      }
+
+      return sections;
+    } catch (extractError) {
+      // Final fallback - return full text as summary
+      sections.summary = text.length > 500 ? text.substring(0, 500) + "..." : text;
+      return sections;
+    }
+  }
+};
+
+// Helper function to wait for rate limit
+const waitForRateLimit = async () => {
+  const now = Date.now();
+  const timeSinceLastRequest = now - lastRequestTime;
+  
+  if (timeSinceLastRequest < MIN_REQUEST_INTERVAL) {
+    const waitTime = MIN_REQUEST_INTERVAL - timeSinceLastRequest;
+    await new Promise(resolve => setTimeout(resolve, waitTime));
+  }
+  
+  lastRequestTime = Date.now();
 };
 
 // Main function: Analyze medical report
@@ -98,6 +176,9 @@ export const analyzeReport = async (file) => {
         error: 'AI service is not initialized. Please check your API configuration.',
       };
     }
+    
+    // Wait for rate limit before making request
+    await waitForRateLimit();
 
     // Validate file
     const validation = validateFile(file);
@@ -108,44 +189,71 @@ export const analyzeReport = async (file) => {
     // Convert file to base64
     const base64Data = await fileToBase64(file);
     const mimeType = file.type;
+    
+    // Create comprehensive prompt that does both OCR and analysis in one call
+    const prompt = `You are an AI medical assistant with expertise in both modern medicine and Ayurveda. 
 
-    // Create detailed medical analysis prompt
-    const prompt = `You are an AI medical assistant with expertise in both modern medicine and Ayurveda. Analyze this medical report and provide:
+Analyze this medical report image and provide a comprehensive health analysis.
 
-1. SUMMARY: A brief overview of key findings and test results (2-3 sentences)
+First, carefully read and extract ALL text from the image including:
+- Test names and parameters
+- Test values and results
+- Reference ranges
+- Patient information
+- Doctor's notes and observations
 
-2. MEDICAL INSIGHTS: Detailed explanation of medical terms and what the results indicate in simple, easy-to-understand language
+Then, based on what you see in the report, provide your analysis in this EXACT JSON format.
+CRITICAL: Ensure all text fields are properly escaped and do not contain unescaped quotes or newlines that break JSON formatting.
 
-3. MODERN MEDICINE RECOMMENDATIONS: Evidence-based medical advice, lifestyle modifications, and any recommended follow-up actions based on the results
+{
+  "summary": "Brief overview of key findings and test results in 2-3 sentences",
+  "insights": "Detailed explanation of medical terms and what the results indicate in simple easy-to-understand language. Explain any abnormal values and their potential implications",
+  "modernMedicine": "Evidence-based medical advice lifestyle modifications and any recommended follow-up actions based on the results",
+  "ayurvedic": "Traditional Ayurvedic treatment suggestions herbal remedies and holistic approaches that complement the condition shown in the report",
+  "lifestyle": "Specific dietary recommendations exercise suggestions stress management techniques and daily routine modifications"
+}
 
-4. AYURVEDIC SOLUTIONS: Traditional Ayurvedic treatment suggestions, herbal remedies, and holistic approaches that complement the condition shown in the report
+IMPORTANT RULES:
+1. Return ONLY valid JSON - no extra text before or after
+2. Use simple quotes within strings or escape them properly
+3. Keep each field as a single continuous paragraph without line breaks
+4. Remove all markdown formatting like ** or * from the output
+5. Do not use nested quotes
+6. This is for informational purposes only and should not replace professional medical consultation`;
 
-5. LIFESTYLE & DIET: Specific dietary recommendations, exercise suggestions, stress management techniques, and daily routine modifications
-
-Format your response with clear section headings. Be empathetic, informative, and provide actionable advice. Important: This is for informational purposes only and should not replace professional medical consultation.`;
-
-    // Make API call to Gemini with updated format for @google/genai v1.x
-    console.log('Making API request to Gemini...');
-    const result = await model.generateContent({
-      contents: [
+    // Single API call with image for both OCR and analysis
+    let result;
+    try {
+      result = await model.generateContent([
+        prompt,
         {
-          role: 'user',
-          parts: [
-            { text: prompt },
-            {
-              inlineData: {
-                mimeType: mimeType,
-                data: base64Data,
-              },
-            },
-          ],
+          inlineData: {
+            mimeType: mimeType,
+            data: base64Data,
+          },
         },
-      ],
-    });
+      ]);
+    } catch (apiError) {
+      // Check if it's a rate limit error
+      if (apiError.status === 429 || apiError.message?.includes('quota') || apiError.message?.includes('rate limit')) {
+        throw new Error('Rate limit exceeded. Please wait a minute and try again. The free tier has limited requests per minute.');
+      }
+      throw apiError;
+    }
 
-    console.log('API request successful');
     const response = await result.response;
+    
+    // Check if response has candidates
+    if (!response.candidates || response.candidates.length === 0) {
+      throw new Error('AI did not generate any response. This might be due to content filtering or API restrictions.');
+    }
+    
     const text = response.text();
+    
+    // Validate response is not empty
+    if (!text || text.trim().length === 0) {
+      throw new Error('Empty response received from Gemini AI. The image might not be readable or the API might have content restrictions.');
+    }
 
     // Parse response into structured sections
     const parsedSections = parseResponse(text);
@@ -155,20 +263,13 @@ Format your response with clear section headings. Be empathetic, informative, an
       data: parsedSections,
     };
   } catch (error) {
-    console.error('Error analyzing report:', error);
-    console.error('Error details:', {
-      message: error.message,
-      status: error.status,
-      statusText: error.statusText,
-    });
-
     // Handle specific error types
     let errorMessage = 'Failed to analyze report. Please try again.';
 
     if (error.message.includes('API key') || error.message.includes('API_KEY')) {
       errorMessage = 'Invalid or restricted API key. Please check your Google Cloud Console settings and ensure the Generative Language API is enabled.';
-    } else if (error.message.includes('quota') || error.message.includes('rate limit') || error.message.includes('429')) {
-      errorMessage = 'API quota exceeded. Please try again later or upgrade your API plan.';
+    } else if (error.message.includes('quota') || error.message.includes('rate limit') || error.message.includes('429') || error.message.includes('Rate limit')) {
+      errorMessage = 'Rate limit exceeded. Please wait at least 1 minute before trying again. The free tier allows limited requests per minute.';
     } else if (error.message.includes('503') || error.message.includes('temporarily unavailable')) {
       errorMessage = 'Gemini service is temporarily unavailable. This might be due to: \n1. API key restrictions (check Google Cloud Console)\n2. Service maintenance\n3. Rate limiting\n\nPlease try again in a few moments.';
     } else if (error.message.includes('network') || error.message.includes('fetch') || error.message.includes('Failed to fetch')) {
