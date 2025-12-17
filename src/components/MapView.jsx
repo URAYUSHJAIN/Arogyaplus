@@ -188,22 +188,22 @@ const MapView = ({
   if (!userLocation && hospitals.length === 0) {
     return (
       <div 
-        className={`flex items-center justify-center bg-gray-100 rounded-xl ${className}`}
+        className={`flex items-center justify-center bg-slate-800/50 backdrop-blur-md border border-white/10 rounded-xl ${className}`}
         style={{ height }}
       >
         <div className="text-center p-8">
-          <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-16 h-16 text-slate-500 mx-auto mb-4" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
             <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
             <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
-          <p className="text-gray-600">Map will appear here when location is available</p>
+          <p className="text-slate-400">Map will appear here when location is available</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={`rounded-xl overflow-hidden shadow-lg border-2 border-gray-200 ${className}`} style={{ height }}>
+    <div className={`rounded-xl overflow-hidden shadow-lg border border-white/10 ${className}`} style={{ height }}>
       <MapContainer
         center={mapCenter}
         zoom={mapZoom}

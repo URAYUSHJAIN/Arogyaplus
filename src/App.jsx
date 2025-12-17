@@ -6,6 +6,7 @@ import PillLoader from './components/PillLoader'
 
 function App() {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [language, setLanguage] = useState('en');
 
   useEffect(() => {
     // Show loader for 2 seconds when app starts
@@ -23,13 +24,13 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col scroll-smooth">
-      <Header />
+      <Header language={language} setLanguage={setLanguage} />
       
       <main className="flex-1">
-        <Outlet />
+        <Outlet context={{ language }} />
       </main>
       
-      <Footer />
+      <Footer language={language} />
     </div>
   )
 }

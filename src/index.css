@@ -10,8 +10,8 @@ html {
   line-height: 1.5;
   font-weight: 400;
 
-  color: #1f2937;
-  background-color: #ffffff;
+  color: #f8fafc;
+  background-color: #0f172a;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -32,6 +32,8 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background-color: #0f172a;
+  color: #f8fafc;
 }
 
 h1 {
@@ -115,7 +117,7 @@ button:focus-visible {
 }
 
 .pill-gradient {
-  background-image: linear-gradient(to right, #16a34a 50%, #ffffff 50%);
+  background-image: linear-gradient(to right, #3b82f6 50%, #ffffff 50%);
 }
 
 .pill-shadow {
@@ -182,6 +184,39 @@ button:focus-visible {
   }
   100% {
     transform: translateY(-15px) scale(1, 1);
+  }
+}
+
+/* Floating Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+.animate-float-slow {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-medium {
+  animation: float 5s ease-in-out infinite;
+}
+
+.animate-float-fast {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

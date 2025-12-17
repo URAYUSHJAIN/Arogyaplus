@@ -107,7 +107,7 @@ const parseResponse = (text) => {
         lifestyle: data.lifestyle || '',
         fullText: text
     };
-  } catch (e) {
+  } catch {
     // Advanced extraction: Find each field in the JSON-like text
     try {
       const extractField = (fieldName) => {
@@ -138,7 +138,7 @@ const parseResponse = (text) => {
       }
 
       return sections;
-    } catch (extractError) {
+    } catch {
       // Final fallback - return full text as summary
       sections.summary = text.length > 500 ? text.substring(0, 500) + "..." : text;
       return sections;
