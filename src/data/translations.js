@@ -213,7 +213,10 @@ export const translations = {
       share: "Share Results",
       download: "Download PDF",
       backToHome: "Back to Home",
-      remove: "Remove"
+      remove: "Remove",
+      analyzeReport: "Analyze Report",
+      emergencyAccess: "Emergency Access",
+      analyzeAnother: "Analyze Another Report"
     }
   },
   hi: {
@@ -430,7 +433,10 @@ export const translations = {
       share: "परिणाम साझा करें",
       download: "पीडीएफ डाउनलोड करें",
       backToHome: "घर वापस जाएं",
-      remove: "हटाएं"
+      remove: "हटाएं",
+      analyzeReport: "रिपोर्ट का विश्लेषण करें",
+      emergencyAccess: "आपातकालीन पहुंच",
+      analyzeAnother: "एक और रिपोर्ट का विश्लेषण करें"
     }
   }
 };

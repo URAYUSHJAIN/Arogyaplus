@@ -4,7 +4,7 @@ import * as pdfjsLib from 'pdfjs-dist';
 pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
 const HF_TOKEN = import.meta.env.VITE_HUGGING_FACE_TOKEN;
-const MODEL_ID = "meta-llama/Llama-3.2-11B-Vision-Instruct";
+const MODEL_ID = "Qwen/Qwen2.5-VL-7B-Instruct";
 
 // File validation helpers
 export const validateFile = (file) => {
@@ -63,6 +63,38 @@ const convertPdfToImages = async (file) => {
   }
 
   return images;
+};
+
+// Helper to resize image to avoid payload limits
+const resizeImage = (base64Str) => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.src = `data:image/jpeg;base64,${base64Str}`;
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const MAX_WIDTH = 1024;
+      const MAX_HEIGHT = 1024;
+      let width = img.width;
+      let height = img.height;
+
+      if (width > height) {
+        if (width > MAX_WIDTH) {
+          height *= MAX_WIDTH / width;
+          width = MAX_WIDTH;
+        }
+      } else {
+        if (height > MAX_HEIGHT) {
+          width *= MAX_HEIGHT / height;
+          height = MAX_HEIGHT;
+        }
+      }
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL('image/jpeg', 0.8).split(',')[1]);
+    };
+  });
 };
 
 // Parse AI response into structured sections
@@ -134,8 +166,11 @@ export const analyzeReport = async (file) => {
       images = [base64];
     }
 
+    // Resize the first image to ensure it fits in the payload
+    const resizedImageBase64 = await resizeImage(images[0]);
+
     // Construct the prompt
-    const prompt = `You are an AI medical assistant. Analyze this medical report image.
+    const userPrompt = `Analyze this medical report image.
     
     Extract all text and provide a comprehensive health analysis in the following JSON format:
     {
@@ -148,52 +183,76 @@ export const analyzeReport = async (file) => {
     
     Return ONLY valid JSON. Do not include any other text.`;
 
-    // Prepare payload for Hugging Face Inference API
-    // Llama 3.2 Vision expects a specific format or we can use the standard image-text-to-text task format
-    // For the Inference API, we often send inputs directly.
-    // However, for Vision models, the payload structure can vary.
-    // We will use the standard chat completion format if supported, or the raw input format.
+    // Prepare payload for Hugging Face Router via Hyperbolic provider
+    // Using Qwen2.5-VL-7B-Instruct with OpenAI-compatible chat completions endpoint
     
-    // Using the chat completion endpoint for vision models if available, or standard inference
-    // Llama 3.2 Vision is a multimodal model.
-    
-    const response = await fetch(`https://api-inference.huggingface.co/models/${MODEL_ID}`, {
+    // Use proxy in development to avoid CORS, direct URL in production
+    const API_URL = import.meta.env.DEV 
+      ? `/api/hf/hyperbolic/v1/chat/completions`
+      : `https://router.huggingface.co/hyperbolic/v1/chat/completions`;
+
+    console.log("Calling AI API at:", API_URL);
+
+    const response = await fetch(API_URL, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${HF_TOKEN}`,
-        "Content-Type": "application/json",
-        "x-use-cache": "false"
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        inputs: `<|image|>\n${prompt}`,
-        parameters: {
-          max_new_tokens: 2000,
-          temperature: 0.1, // Low temperature for consistent JSON
-        },
-        // For some HF models, image is passed separately or encoded in inputs
-        // Standard HF Inference API for vision-text-to-text usually accepts:
-        // { inputs: "text", image: "base64" } or similar.
-        // But Llama 3.2 Vision might be deployed as a chat model.
-        // Let's try the standard payload for multimodal models on HF Inference API.
-        // If this fails, we might need to adjust the payload structure.
-        image: images[0] // Sending the first page/image for analysis
+        model: MODEL_ID,
+        messages: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: userPrompt
+              },
+              {
+                type: "image_url",
+                image_url: {
+                  url: `data:image/jpeg;base64,${resizedImageBase64}`
+                }
+              }
+            ]
+          }
+        ],
+        max_tokens: 2000,
+        temperature: 0.1
       }),
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
+      const errorText = await response.text();
+      console.error("API Error Response:", errorText);
+      
+      let errorMessage = `API Error: ${response.status} ${response.statusText}`;
+      try {
+        const errorJson = JSON.parse(errorText);
+        if (errorJson.error) errorMessage = errorJson.error;
+      } catch (e) {
+        // If not JSON, use the text or status
+        if (errorText.includes("<!DOCTYPE html>")) {
+          errorMessage = "Proxy Error: The server returned an HTML page instead of JSON. Please check your network connection or proxy settings.";
+        } else if (errorText.length < 100) {
+          errorMessage += ` - ${errorText}`;
+        }
+      }
+      
       if (response.status === 503) {
         throw new Error("Model is loading. Please try again in a few seconds.");
       }
-      throw new Error(errorData.error || `API Error: ${response.statusText}`);
+      throw new Error(errorMessage);
     }
 
     const result = await response.json();
     
-    // Result format depends on the model task. 
-    // Usually it's an array of generated text: [{ generated_text: "..." }]
+    // Result format is OpenAI-compatible chat completions
     let generatedText = "";
-    if (Array.isArray(result) && result[0]?.generated_text) {
+    if (result.choices && result.choices.length > 0) {
+      generatedText = result.choices[0].message?.content || "";
+    } else if (Array.isArray(result) && result[0]?.generated_text) {
       generatedText = result[0].generated_text;
     } else if (result.generated_text) {
       generatedText = result.generated_text;
@@ -201,8 +260,8 @@ export const analyzeReport = async (file) => {
       generatedText = JSON.stringify(result);
     }
 
-    // Clean up the response (remove the prompt if it's echoed back)
-    generatedText = generatedText.replace(prompt, '').replace('<|image|>', '').trim();
+    // Clean up the response
+    generatedText = generatedText.trim();
 
     const parsedSections = parseResponse(generatedText);
 

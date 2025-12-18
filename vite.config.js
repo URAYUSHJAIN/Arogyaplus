@@ -33,6 +33,16 @@ export default defineConfig({
       }
     })
   ],
+  server: {
+    proxy: {
+      '/api/hf': {
+        target: 'https://router.huggingface.co',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/hf/, ''),
+        secure: false,
+      },
+    },
+  },
   build: {
     rollupOptions: {
       output: {

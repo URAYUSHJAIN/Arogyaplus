@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
-import { analyzeReport, validateFile } from '../services/geminiService';
+import { analyzeReport, validateFile } from '../services/aiService';
 import { saveMedicalSummary } from '../services/emergencyService';
 import PillLoader from '../components/PillLoader';
 import { translations } from '../data/translations';
@@ -205,13 +205,13 @@ const AIAnalysisPage = () => {
 
             {selectedFile && (
                 <div className="mt-4 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <svg className="w-8 h-8 text-blue-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <svg className="w-8 h-8 text-blue-400 flex-shrink-0" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
                         <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
-                      <div className="text-left">
-                        <p className="font-semibold text-white">{selectedFile.name}</p>
+                      <div className="text-left min-w-0">
+                        <p className="font-semibold text-white truncate" title={selectedFile.name}>{selectedFile.name}</p>
                         <p className="text-sm text-slate-400">{(selectedFile.size / 1024).toFixed(2)} KB</p>
                       </div>
                     </div>
@@ -220,7 +220,7 @@ const AIAnalysisPage = () => {
                         e.preventDefault();
                         handleRemoveFile();
                       }}
-                      className="text-red-400 hover:text-red-300 font-medium"
+                      className="text-red-400 hover:text-red-300 font-medium flex-shrink-0"
                     >
                       {t.remove}
                     </button>
