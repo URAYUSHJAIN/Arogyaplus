@@ -231,7 +231,7 @@ export const analyzeReport = async (file) => {
       try {
         const errorJson = JSON.parse(errorText);
         if (errorJson.error) errorMessage = errorJson.error;
-      } catch (e) {
+      } catch {
         // If not JSON, use the text or status
         if (errorText.includes("<!DOCTYPE html>")) {
           errorMessage = "Proxy Error: The server returned an HTML page instead of JSON. Please check your network connection or proxy settings.";

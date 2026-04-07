@@ -10,7 +10,7 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['logo.ico', 'logo1.jpg'],
+      includeAssets: ['logo.ico', 'logo1.png'],
       manifest: {
         name: 'ArogyaPlus - Healthcare Services',
         short_name: 'ArogyaPlus',

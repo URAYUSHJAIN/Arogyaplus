@@ -30,19 +30,13 @@ const Blog = () => {
   ];
 
   return (
-    <section id="news" className="bg-slate-900 py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Background Decoration */}
-      <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-1/3 right-1/4 w-[600px] h-[600px] bg-blue-600/5 rounded-full blur-[120px]"></div>
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-600/5 rounded-full blur-[100px]"></div>
-      </div>
-
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+    <section id="news" className="bg-[#F5F3EE] py-16 sm:py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-12 text-center">
+          <h2 className="mb-4 text-4xl text-[#1E3A28]">
             {t.title}
           </h2>
-          <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+          <p className="mx-auto max-w-2xl text-lg text-[#6B8F71]">
             {t.subtitle}
           </p>
         </div>
@@ -51,34 +45,31 @@ const Blog = () => {
           {articles.map((article, index) => (
             <div 
               key={index}
-              className="group bg-slate-800/50 backdrop-blur-md border border-white/10 rounded-3xl overflow-hidden hover:bg-slate-800/80 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/10"
+              className="overflow-hidden rounded-2xl border border-[#C8DFC9] bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg"
             >
               <div className="relative h-56 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-60 z-10"></div>
                 <img 
                   src={article.image}
                   alt={article.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  className="h-full w-full object-cover"
                   loading="lazy"
                 />
-                <span className="absolute top-4 left-4 bg-blue-600/90 backdrop-blur-sm text-white px-4 py-1.5 rounded-full text-sm font-bold z-20 shadow-lg shadow-blue-600/20">
+                <span className="absolute left-4 top-4 rounded-full bg-[#3D6B4F] px-4 py-1 text-sm font-semibold text-white">
                   {article.category}
                 </span>
               </div>
-              <div className="p-8">
-                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors duration-300">
+              <div className="p-6">
+                <h3 className="mb-3 text-2xl text-[#1E3A28]">
                   {article.title}
                 </h3>
-                <p className="text-slate-400 mb-6 line-clamp-3 leading-relaxed">
+                <p className="mb-6 line-clamp-3 leading-relaxed text-[#6B8F71]">
                   {article.excerpt}
                 </p>
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-500 text-sm">{article.date}</span>
-                  <a href="#read-more" className="text-blue-400 hover:text-blue-300 font-bold flex items-center gap-2 group-hover:gap-3 transition-all duration-300">
+                  <span className="text-sm text-[#6B8F71]">{article.date}</span>
+                  <a href="#read-more" className="inline-flex items-center gap-2 text-sm font-semibold text-[#3D6B4F] hover:text-[#2A4A35]">
                     {t.readMore}
-                    <svg className="w-4 h-4" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-                      <path d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
+                    <span aria-hidden>→</span>
                   </a>
                 </div>
               </div>

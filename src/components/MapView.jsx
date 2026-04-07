@@ -132,14 +132,14 @@ const MapView = ({
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">{hospital.type}</span>
                   {hospital.emergency24x7 && (
-                    <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">
+                    <span className="rounded-full bg-amber-50 px-2 py-1 text-xs text-amber-700">
                       24/7 Emergency
                     </span>
                   )}
                 </div>
                 <p className="text-sm text-gray-700">{hospital.specialty}</p>
                 {hospital.distance && (
-                  <p className="text-sm font-semibold text-blue-600">
+                  <p className="text-sm font-semibold text-[#3D6B4F]">
                     {hospital.distanceText || `${hospital.distance} km away`}
                   </p>
                 )}
@@ -147,7 +147,7 @@ const MapView = ({
                 <div className="flex gap-2 mt-3">
                   <a
                     href={`tel:${hospital.phone}`}
-                    className="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700 transition-colors duration-200"
+                    className="rounded bg-[#3D6B4F] px-3 py-1 text-xs text-white transition-colors duration-200 hover:bg-[#2A4A35]"
                   >
                     Call Hospital
                   </a>
@@ -158,7 +158,7 @@ const MapView = ({
                         window.open(directionsUrl, '_blank');
                       }
                     }}
-                    className="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700 transition-colors duration-200"
+                    className="rounded border border-[#3D6B4F] px-3 py-1 text-xs text-[#3D6B4F] transition-colors duration-200 hover:bg-[#E8F2E9]"
                   >
                     Get Directions
                   </button>
@@ -188,22 +188,22 @@ const MapView = ({
   if (!userLocation && hospitals.length === 0) {
     return (
       <div 
-        className={`flex items-center justify-center bg-slate-800/50 backdrop-blur-md border border-white/10 rounded-xl ${className}`}
+        className={`flex items-center justify-center rounded-xl border border-[#C8DFC9] bg-[#F5F3EE] ${className}`}
         style={{ height }}
       >
         <div className="text-center p-8">
-          <svg className="w-16 h-16 text-slate-500 mx-auto mb-4" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="mx-auto mb-4 h-16 w-16 text-[#6B8F71]" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
             <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
             <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
-          <p className="text-slate-400">Map will appear here when location is available</p>
+          <p className="text-[#6B8F71]">Map will appear here when location is available</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={`rounded-xl overflow-hidden shadow-lg border border-white/10 ${className}`} style={{ height }}>
+    <div className={`overflow-hidden rounded-xl border border-[#C8DFC9] shadow-sm ${className}`} style={{ height }}>
       <MapContainer
         center={mapCenter}
         zoom={mapZoom}
